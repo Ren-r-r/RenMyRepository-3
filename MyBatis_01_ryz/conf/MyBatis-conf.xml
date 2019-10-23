@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+ <!-- 配置 -->
+<configuration>
+	
+	<!-- 引入外部jdbc四要素 -->
+	<properties resource="dbconfig.properties">	</properties>
+	
+	<!-- 给对象设置别名  alias:不写默认为类名-->
+	<typeAliases>
+		<typeAlias type="com.ryz.MyBatis.entity.emp" alias="emp"/>
+	</typeAliases>
+
+	<!-- 环境列表  default:默认环境 -->
+	<environments default="development">
+		<!-- 环境,id:环境的标识符  -->
+		<environment id="development">
+			<!-- 事务管理 -->
+			<transactionManager type="JDBC" />
+			<!-- 数据源 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<!-- 映射列表 -->
+	<mappers>
+		<!-- 映射 -->
+		<mapper resource="empMapped.xml" />
+	</mappers>
+	
+</configuration>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <!-- 
+ 	mapper:映射
+ 	namespace:名称空间
+  -->
+<mapper namespace="com.ryz.MyBatis.Mapper.empMapper">
+
+	<select id="getemp" resultType="emp">
+		select * from emp where empno = #{id}
+	</select>
+	
+	<select id="getempandname" resultType="emp">
+		select * from emp where empno=#{empno} and ename=#{ename}
+	</select>
+	
+	<select id="getallemp" resultType="emp">
+		select * from emp
+	</select>
+	
+	<select id="getemplike" resultType="emp">
+		select * from emp where eAddress like #{eAddress}
+	</select>
+	
+	<insert id="insertemp" useGeneratedKeys="true" keyColumn="empno" keyProperty="empno">
+		insert into emp values(default,#{ename},#{esal},#{eAddress})
+	</insert>
+	
+	<delete id="deleteemp">
+		delete from emp where empno=#{empno}
+	</delete>
+	
+	<update id="updateemp">
+		 update emp set ename=#{ename},esal=#{esal},eAddress=#{eAddress} where empno=#{empno}
+	</update>
+	
+	<!-- //模糊查询(动态sql)
+	public List<emp> likeemp(emp emp);
+	 -->
+	 
+	<select id="likeemp" resultType="emp">
+	 	 select * from emp 
+	 	 where 1=1
+	 <if test="ename!=null">
+	 	and ename like #{ename} 
+	 </if>
+	 <if test="esal!=null">
+	 	 and esal=#{esal} 
+	 </if>
+	 <if test="eAddress!=null">
+	 	 and eAddress like #{eAddress}
+	 </if>
+	</select>
+	
+	<!-- //修改(动态sql) -->
+	<update id="updaemp">
+		update emp 
+	<set> 
+	 <if test="ename!=null">
+		ename=#{ename},
+	</if>
+	<if test="esal!=null">
+		esal=#{esal},
+	</if>
+	<if test="eAddress!=null">
+		eAddress=#{eAddress} 
+   	</if>
+   	</set>
+		where empno=#{empno}
+	</update>
+	
+	<!-- public List<emp> choose();动态sql -->
+	<select id="choose" resultType="emp">
+		select * from emp
+		<where>
+			<choose>
+				<when test="empno!=null">
+					empno=#{empno}
+				</when>
+				<when test="ename!=null">
+					and ename=#{ename}
+				</when>
+				<when test="esal!=null">
+					and esal=#{esal}
+				</when>
+				<when test="eAddress!=null">
+					and eAddress=#{eAddress}
+				</when>
+				<otherwise>
+					and 1=1
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<!-- foreach循环查询 (动态sql)-->
+	<select id="foremp" resultType="emp">
+		select * from emp
+		where
+		empno in(
+		<foreach collection="list" item="empno" separator=",">
+			#{empno}
+		</foreach>
+		)
+	</select>
+	
+	<!-- 批量添加员工(第一种写法) -->
+	<!-- public int inerempBath(@Param("emps")List<emp> emps); -->
+	<insert id="inerempBath">
+		insert into emp  
+		values
+			<foreach collection="emps" item="emp" separator=",">
+				(default,#{emp.ename},#{emp.esal},#{emp.eAddress})
+			</foreach>
+	</insert>
+	
+	<!-- 批量添加员工(第二种写法) -->
+	<!-- public int inerempBath(@Param("emps")List<emp> emps); -->
+	<insert id="inerempBaths">
+			<foreach collection="emps" item="emp" separator=";">
+				insert into emp  values (default,#{emp.ename},#{emp.esal},#{emp.eAddress})
+			</foreach>
+	</insert>
+</mapper>
+ 
